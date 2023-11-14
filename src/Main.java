@@ -20,18 +20,34 @@ public class Main {
             Scanner scan = new Scanner(System.in);
             System.out.print("Enter your placement (1-9):");
             int playerPos = scan.nextInt();
-            System.out.println();
+            while ( playerPositions.contains(playerPos) || pcPositions.contains(playerPos) ) {
+                System.out.print("Position taken, choose another (1-9):");
+                playerPos = scan.nextInt();
+            }
 
+            playerPositions.add(playerPos);
             placePiece( gameBoard, playerPos, "player" );
+
+            if ( checkWinner () ){
+                break;
+            }
 
             Random rand = new Random();
             int pcPos = rand.nextInt(9) + 1;
+            while ( playerPositions.contains(pcPos) || pcPositions.contains(pcPos) ) {
+                pcPos = rand.nextInt(9) + 1;
+            }
+            pcPositions.add(pcPos);
 
             placePiece( gameBoard, pcPos, "PC" );
 
             printGameBoard(gameBoard);
-            checkWinner ();
+
+            if ( checkWinner () ) {
+                break;
+            }
         }
+
     }
 
     public static void printGameBoard (char [][] gameBoard) {
@@ -82,12 +98,12 @@ public class Main {
         }
     }
 
-    public static String checkWinner () {
+    public static Boolean checkWinner () {
         List topRow = Arrays.asList(1, 2, 3);
         List midRow = Arrays.asList(4, 5, 6);
         List bottomRow = Arrays.asList(7, 8, 9);
         List leftCol = Arrays.asList(1, 4, 7);
-        List midCol = Arrays.asList(3, 5, 8);
+        List midCol = Arrays.asList(2, 5, 8);
         List rightCol = Arrays.asList(3, 6, 9);
         List leftCross = Arrays.asList(1, 5, 9);
         List rightCross = Arrays.asList(3, 5, 7);
@@ -104,16 +120,19 @@ public class Main {
 
         for(List l: winning) {
             if(playerPositions.containsAll(l)) {
-                return "Congratulations you won!";
+                System.out.println( "Congratulations you won!");
+                return Boolean.TRUE;
             }
             if(pcPositions.containsAll(l)) {
-                return "PC won! Sorry :(";
+                System.out.println("PC won! Sorry :(");
+                return Boolean.TRUE;
             }
         }
 
         if ( (playerPositions.size() + pcPositions.size()) > 8 ) {
-            return "Game over!";
+            System.out.println("Game over!");
+                return Boolean.TRUE;
         }
-        return "";
+        return Boolean.FALSE;
     }
 }
